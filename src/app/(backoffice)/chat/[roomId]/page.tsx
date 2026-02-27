@@ -56,6 +56,27 @@ export default async function ChatRoomPage({
     notFound();
   }
 
+  // Load initial members for the member list
+  let initialMembers: { user_id: string; display_name: string }[] = [];
+  if (!room.is_direct) {
+    const { data: memberRows } = await supabase
+      .from("room_members")
+      .select("user_id")
+      .eq("room_id", roomId);
+
+    if (memberRows && memberRows.length > 0) {
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, display_name")
+        .in("id", memberRows.map((m) => m.user_id));
+
+      initialMembers = (profiles ?? []).map((p) => ({
+        user_id: p.id,
+        display_name: p.display_name,
+      }));
+    }
+  }
+
   return (
     <div className="flex h-[calc(100vh-8rem)] gap-4">
       <div className="flex flex-1 flex-col">
@@ -81,6 +102,7 @@ export default async function ChatRoomPage({
             roomId={roomId}
             roomCreatedBy={room.created_by}
             currentUserId={user!.id}
+            initialMembers={initialMembers}
           />
         </div>
       )}

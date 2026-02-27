@@ -12,12 +12,14 @@ export default function MemberList({
   roomId,
   roomCreatedBy,
   currentUserId,
+  initialMembers,
 }: {
   roomId: string;
   roomCreatedBy: string | null;
   currentUserId: string;
+  initialMembers: Member[];
 }) {
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<Member[]>(initialMembers);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<{ id: string; display_name: string }[]>([]);
   const [adding, setAdding] = useState(false);
@@ -25,10 +27,10 @@ export default function MemberList({
   const isCreator = currentUserId === roomCreatedBy;
 
   useEffect(() => {
-    loadMembers();
-  }, [roomId]);
+    setMembers(initialMembers);
+  }, [initialMembers]);
 
-  async function loadMembers() {
+  async function refreshMembers() {
     const supabase = createClient();
     const { data: memberRows } = await supabase
       .from("room_members")
@@ -85,7 +87,7 @@ export default function MemberList({
 
     setSearch("");
     setSearchResults([]);
-    await loadMembers();
+    await refreshMembers();
     setAdding(false);
   }
 
