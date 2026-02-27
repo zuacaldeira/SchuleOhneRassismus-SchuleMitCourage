@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import CreateRoomDialog from "@/components/CreateRoomDialog";
+import NewDirectMessage from "@/components/NewDirectMessage";
 
 export const metadata: Metadata = {
   title: "Chat – Mitgliederbereich",
@@ -38,8 +39,9 @@ export default async function ChatPage() {
     <div className="mx-auto max-w-2xl">
       <h1 className="mb-6 text-2xl font-bold text-fachschule-teal">Chat</h1>
 
-      <div className="mb-6">
+      <div className="mb-6 space-y-3">
         <CreateRoomDialog userId={user!.id} />
+        <NewDirectMessage userId={user!.id} />
       </div>
 
       {/* Group rooms */}
