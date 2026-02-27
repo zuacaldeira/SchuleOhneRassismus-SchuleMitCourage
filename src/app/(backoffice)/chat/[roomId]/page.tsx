@@ -1,0 +1,76 @@
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import ChatWindow from "@/components/ChatWindow";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ roomId: string }>;
+}) {
+  const { roomId } = await params;
+  const supabase = await createClient();
+  const { data: room } = await supabase
+    .from("chat_rooms")
+    .select("name")
+    .eq("id", roomId)
+    .single();
+
+  return {
+    title: room ? `${room.name} – Chat` : "Chat",
+  };
+}
+
+export default async function ChatRoomPage({
+  params,
+}: {
+  params: Promise<{ roomId: string }>;
+}) {
+  const { roomId } = await params;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Check room exists
+  const { data: room } = await supabase
+    .from("chat_rooms")
+    .select("id, name, is_direct")
+    .eq("id", roomId)
+    .single();
+
+  if (!room) {
+    notFound();
+  }
+
+  // Check membership
+  const { data: membership } = await supabase
+    .from("room_members")
+    .select("user_id")
+    .eq("room_id", roomId)
+    .eq("user_id", user!.id)
+    .single();
+
+  if (!membership) {
+    notFound();
+  }
+
+  return (
+    <div className="flex h-[calc(100vh-8rem)] flex-col">
+      {/* Room header */}
+      <div className="flex items-center gap-3 border-b border-light bg-white px-4 py-3">
+        <Link
+          href="/chat"
+          className="text-sm text-dark/40 hover:text-dark"
+        >
+          &larr; Zurück
+        </Link>
+        <h1 className="text-lg font-bold text-fachschule-teal">
+          {room.name || "Direktnachricht"}
+        </h1>
+      </div>
+
+      <ChatWindow roomId={roomId} userId={user!.id} />
+    </div>
+  );
+}
