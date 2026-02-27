@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
 
 const navLinks = [
   { href: "/", label: "Startseite" },
@@ -12,7 +15,32 @@ const navLinks = [
 ];
 
 export default function Header() {
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  }
 
   return (
     <header className="bg-fachschule-teal text-white shadow-md">
@@ -29,7 +57,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop navigation */}
-        <nav className="hidden gap-1 md:flex">
+        <nav className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -39,6 +67,30 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+          <span className="mx-2 h-5 w-px bg-fachschule-teal-light" />
+          {user ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="rounded bg-fachschule-teal-light px-3 py-2 text-sm font-medium transition-colors hover:bg-fachschule-cyan hover:text-fachschule-teal"
+              >
+                Backoffice
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="rounded px-3 py-2 text-sm font-medium transition-colors hover:bg-fachschule-teal-light hover:text-fachschule-cyan"
+              >
+                Abmelden
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="rounded bg-sor-orange px-3 py-2 text-sm font-bold transition-colors hover:bg-sor-orange-dark"
+            >
+              Anmelden
+            </Link>
+          )}
         </nav>
 
         {/* Mobile hamburger button */}
@@ -73,6 +125,35 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+          <hr className="my-2 border-fachschule-teal-light" />
+          {user ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="block rounded px-3 py-2 text-sm font-medium transition-colors hover:bg-fachschule-teal-light hover:text-fachschule-cyan"
+                onClick={() => setMenuOpen(false)}
+              >
+                Backoffice
+              </Link>
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleLogout();
+                }}
+                className="block w-full rounded px-3 py-2 text-left text-sm font-medium transition-colors hover:bg-fachschule-teal-light hover:text-fachschule-cyan"
+              >
+                Abmelden
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="block rounded px-3 py-2 text-sm font-bold text-sor-orange transition-colors hover:bg-fachschule-teal-light"
+              onClick={() => setMenuOpen(false)}
+            >
+              Anmelden
+            </Link>
+          )}
         </nav>
       )}
     </header>
