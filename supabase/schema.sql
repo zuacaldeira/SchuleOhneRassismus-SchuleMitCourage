@@ -145,4 +145,7 @@ create policy "Anyone can submit a contact message"
   on public.contact_messages for insert
   with check (true);
 
--- No public select — only service role can read submissions
+-- Authenticated users can read contact messages (backoffice)
+create policy "Authenticated users can view contact messages"
+  on public.contact_messages for select
+  using (auth.uid() is not null);

@@ -28,6 +28,9 @@ export default function BackofficeHeader({
         <Link href="/chat" className="text-sm font-medium text-fachschule-teal">
           Chat
         </Link>
+        <Link href="/nachrichten" className="text-sm font-medium text-fachschule-teal">
+          Nachrichten
+        </Link>
         <Link href="/profil" className="text-sm font-medium text-fachschule-teal">
           Profil
         </Link>
