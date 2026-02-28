@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { LogoIcon } from "@/components/icons";
 import type { User } from "@supabase/supabase-js";
 
 const navLinks = [
@@ -52,6 +53,7 @@ export default function Header() {
     <header className="bg-fachschule-teal text-white shadow-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center gap-3">
+          <LogoIcon className="h-9 w-9 shrink-0" />
           <div>
             <span className="block text-lg font-bold leading-tight">
               Schule ohne Rassismus
