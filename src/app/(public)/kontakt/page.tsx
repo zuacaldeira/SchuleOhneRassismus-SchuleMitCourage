@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ContactForm from "@/components/ContactForm";
 
 export const metadata: Metadata = {
   title: "Kontakt – Schule ohne Rassismus",
@@ -55,9 +56,9 @@ export default function Kontakt() {
               </div>
             </div>
 
-            {/* Personal contact info card */}
+            {/* Contact form */}
             <div className="rounded-lg border border-light bg-fachschule-teal/5 p-8">
-              <div className="mb-4 flex items-center gap-3">
+              <div className="mb-6 flex items-center gap-3">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -74,18 +75,10 @@ export default function Kontakt() {
                   />
                 </svg>
                 <h2 className="text-2xl font-bold text-fachschule-teal">
-                  Persönlicher Kontakt
+                  Schreib uns
                 </h2>
               </div>
-              <p className="mb-4 leading-relaxed text-dark/80">
-                Am besten erreichst du uns direkt in der Schule. Sprich uns in
-                den Pausen an, komm zu einem unserer Treffen oder wende dich an
-                deine Lehrkräfte – sie können dich an uns weiterleiten.
-              </p>
-              <p className="text-sm text-dark/60">
-                Ein Online-Kontaktformular ist für die Zukunft geplant. Bis
-                dahin freuen wir uns auf den persönlichen Austausch!
-              </p>
+              <ContactForm />
             </div>
           </div>
         </div>
