@@ -1,17 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignupPage() {
-  const router = useRouter();
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,8 +34,50 @@ export default function SignupPage() {
       return;
     }
 
-    router.push("/dashboard");
-    router.refresh();
+    setSuccess(true);
+    setLoading(false);
+  }
+
+  if (success) {
+    return (
+      <>
+        <div className="rounded-lg bg-green-50 p-6 text-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="mx-auto mb-3 h-12 w-12 text-green-600"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            />
+          </svg>
+          <h2 className="mb-2 text-xl font-bold text-green-800">
+            Bestätigungs-E-Mail gesendet
+          </h2>
+          <p className="mb-4 text-sm text-green-700">
+            Bitte prüfe dein Postfach und klicke auf den Bestätigungslink, um
+            dein Konto zu aktivieren.
+          </p>
+          <Link
+            href="/login"
+            className="inline-block rounded-lg bg-fachschule-teal px-6 py-2.5 font-bold text-white transition-colors hover:bg-fachschule-teal-light"
+          >
+            Zur Anmeldung
+          </Link>
+        </div>
+        <p className="mt-4 text-center">
+          <Link href="/" className="text-sm text-dark/40 hover:underline">
+            &larr; Zurück zur Startseite
+          </Link>
+        </p>
+      </>
+    );
   }
 
   return (

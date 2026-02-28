@@ -55,68 +55,37 @@ export default function Kontakt() {
               </div>
             </div>
 
-            {/* Contact form */}
-            <div>
-              <h2 className="mb-6 text-2xl font-bold text-fachschule-teal">
-                Schreib uns
-              </h2>
-              <form className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="mb-1 block text-sm font-medium text-dark"
-                  >
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    required
-                    className="w-full rounded-lg border border-light bg-white px-4 py-2 text-dark outline-none focus:border-fachschule-cyan focus:ring-2 focus:ring-fachschule-cyan/30"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="mb-1 block text-sm font-medium text-dark"
-                  >
-                    E-Mail
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    className="w-full rounded-lg border border-light bg-white px-4 py-2 text-dark outline-none focus:border-fachschule-cyan focus:ring-2 focus:ring-fachschule-cyan/30"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="mb-1 block text-sm font-medium text-dark"
-                  >
-                    Nachricht
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={5}
-                    required
-                    className="w-full rounded-lg border border-light bg-white px-4 py-2 text-dark outline-none focus:border-fachschule-cyan focus:ring-2 focus:ring-fachschule-cyan/30"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="rounded-lg bg-sor-orange px-8 py-3 font-bold text-white transition-colors hover:bg-sor-orange-dark"
+            {/* Personal contact info card */}
+            <div className="rounded-lg border border-light bg-fachschule-teal/5 p-8">
+              <div className="mb-4 flex items-center gap-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="h-8 w-8 text-sor-orange"
+                  aria-hidden="true"
                 >
-                  Nachricht senden
-                </button>
-                <p className="text-xs text-dark/50">
-                  Hinweis: Dieses Formular ist derzeit noch nicht aktiv. Bitte
-                  kontaktiere uns direkt in der Schule.
-                </p>
-              </form>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+                  />
+                </svg>
+                <h2 className="text-2xl font-bold text-fachschule-teal">
+                  Persönlicher Kontakt
+                </h2>
+              </div>
+              <p className="mb-4 leading-relaxed text-dark/80">
+                Am besten erreichst du uns direkt in der Schule. Sprich uns in
+                den Pausen an, komm zu einem unserer Treffen oder wende dich an
+                deine Lehrkräfte – sie können dich an uns weiterleiten.
+              </p>
+              <p className="text-sm text-dark/60">
+                Ein Online-Kontaktformular ist für die Zukunft geplant. Bis
+                dahin freuen wir uns auf den persönlichen Austausch!
+              </p>
             </div>
           </div>
         </div>
