@@ -1,9 +1,3 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Anmelden – Schule ohne Rassismus",
-};
-
 export default function AuthLayout({
   children,
 }: {
