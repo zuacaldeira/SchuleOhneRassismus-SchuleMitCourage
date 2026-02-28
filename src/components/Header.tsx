@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import type { User } from "@supabase/supabase-js";
 
 const navLinks = [
@@ -18,12 +19,17 @@ export default function Header() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const mobileMenuRef = useFocusTrap(menuOpen, closeMenu);
 
   useEffect(() => {
     const supabase = createClient();
 
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
+      setAuthLoading(false);
     });
 
     const {
@@ -68,36 +74,40 @@ export default function Header() {
             </Link>
           ))}
           <span className="mx-2 h-5 w-px bg-fachschule-teal-light" />
-          {user ? (
-            <>
+          <div aria-live="polite">
+            {authLoading ? (
+              <span className="inline-block h-9 w-24 animate-pulse rounded bg-fachschule-teal-light" />
+            ) : user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="rounded bg-fachschule-teal-light px-3 py-2 text-sm font-medium transition-colors hover:bg-fachschule-cyan hover:text-fachschule-teal"
+                >
+                  Backoffice
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="rounded px-3 py-2 text-sm font-medium transition-colors hover:bg-fachschule-teal-light hover:text-fachschule-cyan"
+                >
+                  Abmelden
+                </button>
+              </>
+            ) : (
               <Link
-                href="/dashboard"
-                className="rounded bg-fachschule-teal-light px-3 py-2 text-sm font-medium transition-colors hover:bg-fachschule-cyan hover:text-fachschule-teal"
+                href="/login"
+                className="rounded bg-sor-orange px-3 py-2 text-sm font-bold transition-colors hover:bg-sor-orange-dark"
               >
-                Backoffice
+                Anmelden
               </Link>
-              <button
-                onClick={handleLogout}
-                className="rounded px-3 py-2 text-sm font-medium transition-colors hover:bg-fachschule-teal-light hover:text-fachschule-cyan"
-              >
-                Abmelden
-              </button>
-            </>
-          ) : (
-            <Link
-              href="/login"
-              className="rounded bg-sor-orange px-3 py-2 text-sm font-bold transition-colors hover:bg-sor-orange-dark"
-            >
-              Anmelden
-            </Link>
-          )}
+            )}
+          </div>
         </nav>
 
         {/* Mobile hamburger button */}
         <button
           className="flex flex-col gap-1.5 md:hidden"
           onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Menü öffnen"
+          aria-label={menuOpen ? "Menü schließen" : "Menü öffnen"}
           aria-expanded={menuOpen}
         >
           <span
@@ -114,7 +124,13 @@ export default function Header() {
 
       {/* Mobile navigation */}
       {menuOpen && (
-        <nav className="border-t border-fachschule-teal-light px-4 pb-4 md:hidden">
+        <nav
+          ref={mobileMenuRef as React.RefObject<HTMLElement>}
+          className="border-t border-fachschule-teal-light px-4 pb-4 md:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile Navigation"
+        >
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -126,34 +142,38 @@ export default function Header() {
             </Link>
           ))}
           <hr className="my-2 border-fachschule-teal-light" />
-          {user ? (
-            <>
+          <div aria-live="polite">
+            {authLoading ? (
+              <span className="block h-9 w-24 animate-pulse rounded bg-fachschule-teal-light" />
+            ) : user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="block rounded px-3 py-2 text-sm font-medium transition-colors hover:bg-fachschule-teal-light hover:text-fachschule-cyan"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Backoffice
+                </Link>
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="block w-full rounded px-3 py-2 text-left text-sm font-medium transition-colors hover:bg-fachschule-teal-light hover:text-fachschule-cyan"
+                >
+                  Abmelden
+                </button>
+              </>
+            ) : (
               <Link
-                href="/dashboard"
-                className="block rounded px-3 py-2 text-sm font-medium transition-colors hover:bg-fachschule-teal-light hover:text-fachschule-cyan"
+                href="/login"
+                className="block rounded px-3 py-2 text-sm font-bold text-sor-orange transition-colors hover:bg-fachschule-teal-light"
                 onClick={() => setMenuOpen(false)}
               >
-                Backoffice
+                Anmelden
               </Link>
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  handleLogout();
-                }}
-                className="block w-full rounded px-3 py-2 text-left text-sm font-medium transition-colors hover:bg-fachschule-teal-light hover:text-fachschule-cyan"
-              >
-                Abmelden
-              </button>
-            </>
-          ) : (
-            <Link
-              href="/login"
-              className="block rounded px-3 py-2 text-sm font-bold text-sor-orange transition-colors hover:bg-fachschule-teal-light"
-              onClick={() => setMenuOpen(false)}
-            >
-              Anmelden
-            </Link>
-          )}
+            )}
+          </div>
         </nav>
       )}
     </header>
