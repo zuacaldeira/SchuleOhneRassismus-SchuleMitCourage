@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Hero from "@/components/Hero";
 import Card from "@/components/Card";
+import { DiversityIllustration } from "@/components/icons";
 
 const aktionen = [
   {
@@ -44,6 +45,9 @@ export default function Home() {
             </strong>{" "}
             setzen wir uns aktiv für ein diskriminierungsfreies Lernumfeld ein.
           </p>
+          <div className="mt-8 flex justify-center">
+            <DiversityIllustration />
+          </div>
           <div className="mt-8 text-center">
             <Link
               href="/ueber-uns"

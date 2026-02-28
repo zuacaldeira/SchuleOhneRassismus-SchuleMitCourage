@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { DiversityIllustration } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Über uns – Schule ohne Rassismus",
@@ -16,6 +17,9 @@ export default function UeberUns() {
           <p className="mt-3 text-fachschule-cyan">
             Das Netzwerk und unsere Gruppe an der Fachschule
           </p>
+          <div className="mt-6 flex justify-center">
+            <DiversityIllustration />
+          </div>
         </div>
       </section>
 
