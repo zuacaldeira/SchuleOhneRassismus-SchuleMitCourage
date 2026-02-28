@@ -128,3 +128,21 @@ create trigger on_auth_user_created
 
 -- Enable realtime on messages
 alter publication supabase_realtime add table public.messages;
+
+-- 5. Contact messages (public contact form submissions)
+create table public.contact_messages (
+  id uuid default gen_random_uuid() primary key,
+  name text not null,
+  email text not null,
+  message text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.contact_messages enable row level security;
+
+-- Allow anonymous inserts (public contact form)
+create policy "Anyone can submit a contact message"
+  on public.contact_messages for insert
+  with check (true);
+
+-- No public select — only service role can read submissions
