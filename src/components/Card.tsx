@@ -2,11 +2,13 @@ interface CardProps {
   title: string;
   description: string;
   tag?: string;
+  icon?: React.ReactNode;
 }
 
-export default function Card({ title, description, tag }: CardProps) {
+export default function Card({ title, description, tag, icon }: CardProps) {
   return (
     <div className="rounded-lg border border-light bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+      {icon && <div className="mb-3 text-sor-orange">{icon}</div>}
       {tag && (
         <span className="mb-3 inline-block rounded-full bg-sor-orange/10 px-3 py-1 text-xs font-semibold text-sor-orange">
           {tag}

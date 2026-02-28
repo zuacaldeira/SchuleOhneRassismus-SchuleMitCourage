@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Card from "@/components/Card";
+import { UsersIcon, LightbulbIcon, BookIcon, GlobeIcon } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Mitmachen – Schule ohne Rassismus",
@@ -12,25 +14,25 @@ const moeglichkeiten = [
     title: "Aktionsgruppe beitreten",
     description:
       "Werde festes Mitglied unserer Gruppe und plane mit uns Projekte, Workshops und Veranstaltungen. Wir treffen uns regelmäßig.",
-    icon: "👥",
+    icon: <UsersIcon className="h-8 w-8" aria-label="Gruppe" />,
   },
   {
     title: "Projekte mitgestalten",
     description:
       "Du hast eine Idee für ein Projekt oder eine Aktion? Bring sie ein! Wir unterstützen dich bei der Umsetzung.",
-    icon: "💡",
+    icon: <LightbulbIcon className="h-8 w-8" aria-label="Idee" />,
   },
   {
     title: "Workshops besuchen",
     description:
       "Nimm an unseren Workshops teil und setze dich intensiv mit Themen wie Antirassismus, Zivilcourage und Vielfalt auseinander.",
-    icon: "📚",
+    icon: <BookIcon className="h-8 w-8" aria-label="Workshop" />,
   },
   {
     title: "Botschafter*in werden",
     description:
       "Trage die Werte von Schule ohne Rassismus in deinen Alltag und deine zukünftige pädagogische Arbeit.",
-    icon: "🌍",
+    icon: <GlobeIcon className="h-8 w-8" aria-label="Welt" />,
   },
 ];
 
@@ -59,18 +61,12 @@ export default function Mitmachen() {
           </p>
           <div className="grid gap-6 sm:grid-cols-2">
             {moeglichkeiten.map((m) => (
-              <div
+              <Card
                 key={m.title}
-                className="rounded-lg border border-light bg-white p-6 shadow-sm"
-              >
-                <div className="mb-3 text-3xl">{m.icon}</div>
-                <h3 className="mb-2 text-lg font-bold text-fachschule-teal">
-                  {m.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-dark/70">
-                  {m.description}
-                </p>
-              </div>
+                title={m.title}
+                description={m.description}
+                icon={m.icon}
+              />
             ))}
           </div>
         </div>
