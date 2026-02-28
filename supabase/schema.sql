@@ -33,20 +33,6 @@ create table public.chat_rooms (
 
 alter table public.chat_rooms enable row level security;
 
-create policy "Members can view their rooms"
-  on public.chat_rooms for select
-  using (
-    exists (
-      select 1 from public.room_members
-      where room_members.room_id = chat_rooms.id
-        and room_members.user_id = auth.uid()
-    )
-  );
-
-create policy "Authenticated users can create rooms"
-  on public.chat_rooms for insert
-  with check (auth.uid() = created_by);
-
 -- 3. Room members (join table)
 create table public.room_members (
   room_id uuid references public.chat_rooms(id) on delete cascade,
@@ -56,25 +42,6 @@ create table public.room_members (
 );
 
 alter table public.room_members enable row level security;
-
-create policy "Members can view room members"
-  on public.room_members for select
-  using (
-    exists (
-      select 1 from public.room_members as rm
-      where rm.room_id = room_members.room_id
-        and rm.user_id = auth.uid()
-    )
-  );
-
-create policy "Room creators can add members"
-  on public.room_members for insert
-  with check (
-    auth.uid() in (
-      select created_by from public.chat_rooms where id = room_id
-    )
-    or auth.uid() = user_id
-  );
 
 -- 4. Messages
 create table public.messages (
@@ -87,25 +54,54 @@ create table public.messages (
 
 alter table public.messages enable row level security;
 
+-- Helper function to check room membership (security definer bypasses RLS)
+create or replace function public.is_room_member(p_room_id uuid, p_user_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.room_members
+    where room_id = p_room_id and user_id = p_user_id
+  );
+$$;
+
+-- RLS Policies (use is_room_member to avoid infinite recursion)
+
+create policy "Members can view their rooms"
+  on public.chat_rooms for select
+  using (
+    public.is_room_member(id, auth.uid())
+    or created_by = auth.uid()
+  );
+
+create policy "Authenticated users can create rooms"
+  on public.chat_rooms for insert
+  with check (auth.uid() = created_by);
+
+create policy "Members can view room members"
+  on public.room_members for select
+  using (public.is_room_member(room_id, auth.uid()));
+
+create policy "Room creators can add members"
+  on public.room_members for insert
+  with check (
+    auth.uid() in (
+      select created_by from public.chat_rooms where id = room_id
+    )
+    or auth.uid() = user_id
+  );
+
 create policy "Members can view room messages"
   on public.messages for select
-  using (
-    exists (
-      select 1 from public.room_members
-      where room_members.room_id = messages.room_id
-        and room_members.user_id = auth.uid()
-    )
-  );
+  using (public.is_room_member(room_id, auth.uid()));
 
 create policy "Members can send messages to their rooms"
   on public.messages for insert
   with check (
     auth.uid() = user_id
-    and exists (
-      select 1 from public.room_members
-      where room_members.room_id = messages.room_id
-        and room_members.user_id = auth.uid()
-    )
+    and public.is_room_member(room_id, auth.uid())
   );
 
 -- Indexes
